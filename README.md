@@ -28,42 +28,27 @@ Click the wooden fish icon in the menu bar to knock. Each knock plays a real woo
 
 ---
 
-## Quick Start
+## Download
 
-No Xcode required. Just a terminal and macOS Command Line Tools.
+**[Download DigiBudda-v1.1.0.dmg](https://github.com/too-young-too-naive/DigiBudda/releases/latest/download/DigiBudda-v1.1.0.dmg)** — Open the DMG, drag DigiBudda to Applications, done.
 
-### 1. Install Command Line Tools (if you don't have them)
+> Apple Silicon (arm64) · macOS 14.0+
+
+---
+
+## Build from Source
+
+Prefer to build it yourself? No Xcode required — just a terminal.
 
 ```bash
+# Install Command Line Tools (if you don't have them)
 xcode-select --install
-```
 
-### 2. Clone and Build
-
-```bash
+# Clone and build
 git clone https://github.com/too-young-too-naive/DigiBudda.git
 cd DigiBudda
 ./build.sh run
 ```
-
-That's it. The build script will:
-- Compile all Swift source files
-- Assemble a proper `.app` bundle
-- Launch the app
-
-A wooden fish icon will appear in your menu bar.
-
-### 3. Install to Applications (optional)
-
-```bash
-./build.sh install
-```
-
-Copies the app to `/Applications/DigiBudda.app` so you can launch it from Spotlight.
-
----
-
-## Build Commands
 
 | Command | What it does |
 |---|---|
