@@ -8,7 +8,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private let knockManager = KnockManager.shared
     private let audioManager = AudioManager.shared
-    private let shortcutManager = ShortcutManager.shared
     private let languageManager = LanguageManager.shared
 
     // MARK: - Lifecycle
@@ -20,18 +19,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         setupStatusItem()
         setupPopover()
-        setupShortcut()
     }
 
     /// Terminate immediately if another instance is already running.
     private func ensureSingleInstance() -> Bool {
-        let dominated = NSRunningApplication.runningApplications(
+        let running = NSRunningApplication.runningApplications(
             withBundleIdentifier: Bundle.main.bundleIdentifier ?? ""
         )
-        if dominated.count > 1 {
-            return false
-        }
-        return true
+        return running.count <= 1
     }
 
     // MARK: - Status Bar
@@ -81,19 +76,5 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
             popover.contentViewController?.view.window?.makeKey()
         }
-    }
-
-    // MARK: - Global Shortcut
-
-    private func setupShortcut() {
-        shortcutManager.onKnock = { [weak self] in
-            self?.performKnock()
-        }
-        shortcutManager.register()
-    }
-
-    private func performKnock() {
-        knockManager.knock()
-        audioManager.playKnockSound()
     }
 }

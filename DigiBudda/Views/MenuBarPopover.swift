@@ -78,10 +78,6 @@ struct MenuBarPopover: View {
         VStack(spacing: 8) {
             LanguagePickerView()
 
-            Text(L10n.shortcutHint(lang))
-                .font(.system(size: 10))
-                .foregroundStyle(.tertiary)
-
             Button(L10n.quit(lang)) {
                 NSApplication.shared.terminate(nil)
             }

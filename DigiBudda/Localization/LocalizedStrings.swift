@@ -21,10 +21,6 @@ enum L10n {
         lang.resolved == .chinese ? "语言" : "Language"
     }
 
-    static func shortcutHint(_ lang: AppLanguage) -> String {
-        lang.resolved == .chinese ? "快捷键：⌘⇧K" : "Shortcut: ⌘⇧K"
-    }
-
     static func quit(_ lang: AppLanguage) -> String {
         lang.resolved == .chinese ? "退出 DigiBudda" : "Quit DigiBudda"
     }
