@@ -75,31 +75,34 @@ struct MenuBarPopover: View {
     }
 
     private var bottomControls: some View {
-        HStack(spacing: 0) {
-            Text(L10n.language(lang))
-                .font(.system(size: 11))
-                .foregroundColor(.secondary)
-
-            Picker("", selection: $languageManager.selectedLanguage) {
-                ForEach(AppLanguage.allCases) { language in
-                    Text(language.displayName).tag(language)
-                }
-            }
-            .pickerStyle(.menu)
-            .labelsHidden()
-            .scaleEffect(0.85, anchor: .leading)
-            .frame(width: 100)
-
-            Spacer()
-
-            Button {
-                NSApplication.shared.terminate(nil)
-            } label: {
-                Image(systemName: "power")
+        ZStack {
+            HStack(spacing: 4) {
+                Text(L10n.language(lang))
                     .font(.system(size: 11))
                     .foregroundColor(.secondary)
+
+                Picker("", selection: $languageManager.selectedLanguage) {
+                    ForEach(AppLanguage.allCases) { language in
+                        Text(language.displayName).tag(language)
+                    }
+                }
+                .pickerStyle(.menu)
+                .labelsHidden()
+                .scaleEffect(0.85, anchor: .leading)
+                .frame(width: 100)
             }
-            .buttonStyle(.plain)
+
+            HStack {
+                Spacer()
+                Button {
+                    NSApplication.shared.terminate(nil)
+                } label: {
+                    Image(systemName: "power")
+                        .font(.system(size: 11))
+                        .foregroundColor(.secondary)
+                }
+                .buttonStyle(.plain)
+            }
         }
         .padding(.horizontal, 20)
         .padding(.top, 10)
