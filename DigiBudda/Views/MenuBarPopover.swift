@@ -75,17 +75,34 @@ struct MenuBarPopover: View {
     }
 
     private var bottomControls: some View {
-        VStack(spacing: 8) {
-            LanguagePickerView()
+        HStack(spacing: 0) {
+            Text(L10n.language(lang))
+                .font(.system(size: 11))
+                .foregroundColor(.secondary)
 
-            Button(L10n.quit(lang)) {
+            Picker("", selection: $languageManager.selectedLanguage) {
+                ForEach(AppLanguage.allCases) { language in
+                    Text(language.displayName).tag(language)
+                }
+            }
+            .pickerStyle(.menu)
+            .labelsHidden()
+            .scaleEffect(0.85, anchor: .leading)
+            .frame(width: 100)
+
+            Spacer()
+
+            Button {
                 NSApplication.shared.terminate(nil)
+            } label: {
+                Image(systemName: "power")
+                    .font(.system(size: 11))
+                    .foregroundColor(.secondary)
             }
             .buttonStyle(.plain)
-            .font(.system(size: 11))
-            .foregroundColor(.secondary)
-            .padding(.bottom, 4)
         }
+        .padding(.horizontal, 20)
         .padding(.top, 10)
+        .padding(.bottom, 6)
     }
 }
