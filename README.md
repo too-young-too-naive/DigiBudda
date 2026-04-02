@@ -8,6 +8,12 @@ A lightweight, funny macOS menu bar productivity/spiritual parody app.
 
 Click the wooden fish icon in the menu bar to knock. Each knock plays a real wooden fish sound and accumulates today's merit. Supports 6 languages with in-app switching.
 
+<p align="center">
+  <img src="DigiBudda/Resources/screenshot_en.png" alt="English" width="260">
+  &nbsp;&nbsp;
+  <img src="DigiBudda/Resources/screenshot_cn.png" alt="简体中文" width="260">
+</p>
+
 ---
 
 ## Features
