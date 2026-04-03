@@ -135,6 +135,9 @@ for f in menubar_icon.png menubar_icon@2x.png; do
 done
 echo "✓ Bundled: menu bar icon"
 
+# Ad-hoc code sign (avoids macOS "damaged app" Gatekeeper warning)
+codesign --force --deep --sign - "${APP_BUNDLE}" 2>/dev/null && echo "✓ Ad-hoc signed"
+
 echo "✓ App bundle ready: ${APP_BUNDLE}"
 
 # ──────────────────────────────────────────────

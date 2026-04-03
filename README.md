@@ -34,6 +34,19 @@ Click the wooden fish icon in the menu bar to knock. Each knock plays a real woo
 
 > Apple Silicon (arm64) · macOS 14.0+
 
+<details>
+<summary>⚠️ macOS says "damaged" or "unidentified developer"?</summary>
+
+This app is ad-hoc signed (no Apple Developer certificate). After dragging to Applications, run:
+
+```bash
+xattr -cr /Applications/DigiBudda.app
+```
+
+Then open the app normally. This only needs to be done once.
+
+</details>
+
 ---
 
 ## Build from Source
