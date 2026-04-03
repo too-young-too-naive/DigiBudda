@@ -37,13 +37,15 @@ Click the wooden fish icon in the menu bar to knock. Each knock plays a real woo
 <details>
 <summary>⚠️ macOS says "damaged" or "unidentified developer"?</summary>
 
-This app is ad-hoc signed (no Apple Developer certificate). After dragging to Applications, run:
+This app is not signed with an Apple Developer certificate. After dragging to Applications, open Terminal and run:
 
 ```bash
 xattr -cr /Applications/DigiBudda.app
 ```
 
-Then open the app normally. This only needs to be done once.
+Then open the app again. If it still shows a warning, right-click (or Control-click) DigiBudda in Finder → **Open** — this shows a different prompt with an **Open** button.
+
+This only needs to be done once. macOS remembers your choice afterward.
 
 </details>
 
