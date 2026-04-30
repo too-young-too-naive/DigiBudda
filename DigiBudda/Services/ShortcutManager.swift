@@ -1,4 +1,5 @@
 import Cocoa
+import Combine
 import CoreGraphics
 
 /// Registers a global keyboard shortcut for knocking.
