@@ -89,7 +89,7 @@ struct MenuBarPopover: View {
                 .pickerStyle(.menu)
                 .labelsHidden()
                 .scaleEffect(0.85, anchor: .leading)
-                .frame(width: 100)
+                .frame(width: 90)
             }
 
             HStack {

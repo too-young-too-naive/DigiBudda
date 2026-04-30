@@ -5,9 +5,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private var statusItem: NSStatusItem!
     private var popover: NSPopover!
+    private var settingsWindow: NSWindow?
 
     private let knockManager = KnockManager.shared
     private let audioManager = AudioManager.shared
+    private let shortcutManager = ShortcutManager.shared
     private let languageManager = LanguageManager.shared
 
     // MARK: - Lifecycle
@@ -20,9 +22,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         setupStatusItem()
         setupPopover()
         setupRightClickMenu()
+        setupShortcut()
     }
 
-    /// Terminate immediately if another instance is already running.
     private func ensureSingleInstance() -> Bool {
         let running = NSRunningApplication.runningApplications(
             withBundleIdentifier: Bundle.main.bundleIdentifier ?? ""
@@ -60,7 +62,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc private func handleClick() {
         guard let event = NSApp.currentEvent else { return }
-
         if event.type == .rightMouseUp {
             showRightClickMenu()
         } else {
@@ -83,12 +84,33 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func togglePopover() {
         guard let button = statusItem.button else { return }
-
         if popover.isShown {
             popover.performClose(nil)
         } else {
             popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
             popover.contentViewController?.view.window?.makeKey()
+        }
+    }
+
+    // MARK: - Global Shortcut
+
+    private func setupShortcut() {
+        shortcutManager.onKnock = { [weak self] in
+            self?.knockManager.knock()
+            self?.audioManager.playKnockSound()
+        }
+        requestAccessibilityIfNeeded()
+        shortcutManager.register()
+    }
+
+    /// Prompts the macOS Accessibility permission dialog on first launch.
+    /// `AXIsProcessTrustedWithOptions` with `kAXTrustedCheckOptionPrompt`
+    /// shows the system "allow Accessibility" alert if not yet granted.
+    private func requestAccessibilityIfNeeded() {
+        let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue(): true] as CFDictionary
+        let trusted = AXIsProcessTrustedWithOptions(options)
+        if !trusted {
+            print("[DigiBudda] Accessibility permission not yet granted — system prompt shown.")
         }
     }
 
@@ -98,6 +120,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func setupRightClickMenu() {
         rightClickMenu = NSMenu()
+
+        let settingsItem = NSMenuItem(title: settingsTitle(), action: #selector(showSettings), keyEquivalent: ",")
+        settingsItem.target = self
+        rightClickMenu.addItem(settingsItem)
 
         let aboutItem = NSMenuItem(title: aboutTitle(), action: #selector(showAbout), keyEquivalent: "")
         aboutItem.target = self
@@ -111,9 +137,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func showRightClickMenu() {
-        // Refresh titles in case language changed
-        rightClickMenu.items[0].title = aboutTitle()
-        rightClickMenu.items[2].title = quitTitle()
+        rightClickMenu.items[0].title = settingsTitle()
+        rightClickMenu.items[1].title = aboutTitle()
+        rightClickMenu.items[3].title = quitTitle()
 
         if let button = statusItem.button {
             let p = NSPoint(x: 0, y: button.bounds.height + 5)
@@ -121,14 +147,46 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
+    private func settingsTitle() -> String {
+        L10n.settings(languageManager.selectedLanguage)
+    }
+
     private func aboutTitle() -> String {
-        languageManager.effective == .chinese || languageManager.effective == .chineseTraditional
-            ? "关于 DigiBudda" : "About DigiBudda"
+        let lang = languageManager.effective
+        if lang == .chinese || lang == .chineseTraditional { return "关于 DigiBudda" }
+        if lang == .japanese { return "DigiBudda について" }
+        if lang == .korean { return "DigiBudda 정보" }
+        return "About DigiBudda"
     }
 
     private func quitTitle() -> String {
         L10n.quit(languageManager.selectedLanguage)
     }
+
+    // MARK: - Settings Window
+
+    @objc private func showSettings() {
+        if let window = settingsWindow {
+            window.makeKeyAndOrderFront(nil)
+            NSApp.activate(ignoringOtherApps: true)
+            return
+        }
+
+        let settingsView = SettingsView()
+        let hostingController = NSHostingController(rootView: settingsView)
+
+        let window = NSWindow(contentViewController: hostingController)
+        window.title = settingsTitle()
+        window.styleMask = [.titled, .closable]
+        window.center()
+        window.isReleasedWhenClosed = false
+        window.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
+
+        settingsWindow = window
+    }
+
+    // MARK: - About
 
     @objc private func showAbout() {
         let lang = languageManager.effective
