@@ -1,4 +1,5 @@
 import Foundation
+import Combine
 
 /// Tracks the daily wooden-fish knock count.
 /// Persists to UserDefaults and auto-resets on a new calendar day.
@@ -6,12 +7,17 @@ final class KnockManager: ObservableObject {
 
     static let shared = KnockManager()
 
-    private static let countKey = "knock_count"
-    private static let dateKey  = "knock_date"
+    static let countKey = "knock_count"
+    static let dateKey  = "knock_date"
 
     @Published private(set) var todayCount: Int = 0
 
-    private init() {
+    private let defaults: UserDefaults
+    private let dateProvider: () -> Date
+
+    init(defaults: UserDefaults = .standard, dateProvider: @escaping () -> Date = { Date() }) {
+        self.defaults = defaults
+        self.dateProvider = dateProvider
         loadTodayCount()
     }
 
@@ -25,9 +31,9 @@ final class KnockManager: ObservableObject {
     // MARK: - Persistence
 
     private func loadTodayCount() {
-        let savedDate = UserDefaults.standard.string(forKey: Self.dateKey) ?? ""
+        let savedDate = defaults.string(forKey: Self.dateKey) ?? ""
         if savedDate == todayDateString() {
-            todayCount = UserDefaults.standard.integer(forKey: Self.countKey)
+            todayCount = defaults.integer(forKey: Self.countKey)
         } else {
             todayCount = 0
             persist()
@@ -35,20 +41,20 @@ final class KnockManager: ObservableObject {
     }
 
     private func resetIfNewDay() {
-        let savedDate = UserDefaults.standard.string(forKey: Self.dateKey) ?? ""
+        let savedDate = defaults.string(forKey: Self.dateKey) ?? ""
         if savedDate != todayDateString() {
             todayCount = 0
         }
     }
 
     private func persist() {
-        UserDefaults.standard.set(todayCount, forKey: Self.countKey)
-        UserDefaults.standard.set(todayDateString(), forKey: Self.dateKey)
+        defaults.set(todayCount, forKey: Self.countKey)
+        defaults.set(todayDateString(), forKey: Self.dateKey)
     }
 
-    private func todayDateString() -> String {
+    func todayDateString() -> String {
         let fmt = DateFormatter()
         fmt.dateFormat = "yyyy-MM-dd"
-        return fmt.string(from: Date())
+        return fmt.string(from: dateProvider())
     }
 }

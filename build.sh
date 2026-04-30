@@ -6,6 +6,7 @@
 #   ./build.sh              Build the app
 #   ./build.sh run          Build and launch
 #   ./build.sh install      Build and copy to /Applications
+#   ./build.sh test         Run unit tests (requires Xcode)
 #   ./build.sh clean        Remove build artifacts
 #
 set -euo pipefail
@@ -29,6 +30,12 @@ if [[ "${1:-}" == "clean" ]]; then
     rm -rf "$BUILD_DIR"
     echo "✓ Cleaned."
     exit 0
+fi
+
+if [[ "${1:-}" == "test" ]]; then
+    echo "→ Running unit tests…"
+    swift test 2>&1
+    exit $?
 fi
 
 echo "═══════════════════════════════════════════"
