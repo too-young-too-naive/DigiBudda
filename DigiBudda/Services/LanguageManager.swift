@@ -1,4 +1,5 @@
 import Foundation
+import Combine
 
 /// Manages the user's in-app language preference.
 ///
@@ -9,11 +10,13 @@ final class LanguageManager: ObservableObject {
 
     static let shared = LanguageManager()
 
-    private static let storageKey = "app_language"
+    static let storageKey = "app_language"
+
+    private let defaults: UserDefaults
 
     @Published var selectedLanguage: AppLanguage {
         didSet {
-            UserDefaults.standard.set(selectedLanguage.rawValue, forKey: Self.storageKey)
+            defaults.set(selectedLanguage.rawValue, forKey: Self.storageKey)
         }
     }
 
@@ -22,8 +25,9 @@ final class LanguageManager: ObservableObject {
         selectedLanguage.resolved
     }
 
-    private init() {
-        let raw = UserDefaults.standard.string(forKey: Self.storageKey)
+    init(defaults: UserDefaults = .standard) {
+        self.defaults = defaults
+        let raw = defaults.string(forKey: Self.storageKey)
                   ?? AppLanguage.followSystem.rawValue
         self.selectedLanguage = AppLanguage(rawValue: raw) ?? .followSystem
     }
